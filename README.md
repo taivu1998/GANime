@@ -20,14 +20,22 @@ The project requires the following frameworks:
 
 - NumPy: https://numpy.org
 
+- Matplotlib: https://matplotlib.org
+
 - Kaggle API: https://github.com/Kaggle/kaggle-api
 
-## Download the dataset
+## Download and preprocess data
 
-This project uses the Anime Sketch Colorization Pair dataset from Kaggle. To download the dataset, go to https://www.kaggle.com/ktaebum/anime-sketch-colorization-pair or run the following command (with Kaggle API installed):
+This project uses the Anime Sketch Colorization Pair dataset from Kaggle. To get the data, go to https://www.kaggle.com/ktaebum/anime-sketch-colorization-pair, download the dataset, and unzip it in the ```data``` folder. Another option is to run the following command (with Kaggle API installed):
 
 ```bash
 python utils/download_data.py
+```
+
+After that, run the following command to preprocess the data:
+
+```bash
+python utils/preprocess_data.py --model [model]
 ```
 
 ## Train the models
