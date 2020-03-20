@@ -267,7 +267,6 @@ class Pix2Pix_Losses(object):
         elif norm_tv_loss == 'l2':
             return tf.reduce_mean(tf.sqrt(2 * (tf.nn.l2_loss(x_deltas) + tf.nn.l2_loss(y_deltas))))
     
-    
     def disc_loss(self, disc_real_output, disc_generated_output):
         ''' Calculates discriminator loss. '''
         real_loss = self.loss_object(tf.ones_like(disc_real_output), disc_real_output)
