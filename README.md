@@ -79,5 +79,5 @@ python test.py --model cyclegan --data-path /path/to/dataset/ --output-path /pat
 The program implements two evaluation metrics, including FID and SSIM. To evaluate the models, run the following command:
 
 ```bash
-python evaluate.py --model [model] —metric [metric]
+python evaluate.py --model [model] --metric [metric]
 ```
