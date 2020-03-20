@@ -6,7 +6,13 @@ This program implements several deep generative models for generating colorized 
 
 This section displays some outputs of the program. Each example contains an input image (left), a ground truth image (middle), and a generated image (right).
 
-![output1](https://user-images.githubusercontent.com/46636857/77137430-806a8e80-6aa0-11ea-8cd8-56d17de21835.png) ![output2](https://user-images.githubusercontent.com/46636857/77137442-92e4c800-6aa0-11ea-8fb3-133146c1b32a.png)
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/46636857/77137430-806a8e80-6aa0-11ea-8cd8-56d17de21835.png">
+</p>
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/46636857/77137442-92e4c800-6aa0-11ea-8fb3-133146c1b32a.png">
+</p>
 
 ## Installation
 
