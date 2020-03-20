@@ -18,7 +18,7 @@ The project requires the following frameworks:
 
 ## Download the dataset
 
-This project uses Anime Sketch Colorization Pair dataset from Kaggle. To download the dataset, go to https://www.kaggle.com/ktaebum/anime-sketch-colorization-pair or run the following command (with Kaggle API installed):
+This project uses the Anime Sketch Colorization Pair dataset from Kaggle. To download the dataset, go to https://www.kaggle.com/ktaebum/anime-sketch-colorization-pair or run the following command (with Kaggle API installed):
 
 ```bash
 python utils/download_data.py
