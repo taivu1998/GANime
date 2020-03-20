@@ -35,7 +35,7 @@ class NeuralStyleTransfer_DataLoader(Base_DataLoader):
         ''' Loads an image. '''
         max_dim = 512
         img = tf.io.read_file(image_file)
-        img = tf.image.decode_image(img, channels=3)
+        img = tf.image.decode_image(img, channels = 3)
         img_type = eval('tf.' + dtype)
         img = tf.image.convert_image_dtype(img, img_type)
 

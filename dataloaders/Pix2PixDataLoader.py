@@ -52,7 +52,7 @@ class Pix2Pix_DataLoader(Base_DataLoader):
         ''' Loads the test set. '''
         input_image, real_image = self.load(image_file, dtype = 'float32')
         input_image, real_image = self.resize(input_image, real_image,
-                                        self.img_height, self.img_width)
+                                              self.img_height, self.img_width)
         input_image, real_image = self.normalize(input_image, real_image)
         return input_image, real_image
 

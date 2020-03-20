@@ -69,9 +69,9 @@ class FID(object):
         act1 = self.model.predict(images1)
         act2 = self.model.predict(images2)
         
-        mu1, sigma1 = act1.mean(axis=0), np.cov(act1, rowvar=False)
-        mu2, sigma2 = act2.mean(axis=0), np.cov(act2, rowvar=False)
-        ssdiff = np.sum((mu1 - mu2)**2.0)
+        mu1, sigma1 = act1.mean(axis = 0), np.cov(act1, rowvar = False)
+        mu2, sigma2 = act2.mean(axis = 0), np.cov(act2, rowvar = False)
+        ssdiff = np.sum((mu1 - mu2) ** 2.0)
         covmean = scipy.linalg.sqrtm(sigma1.dot(sigma2))
         if np.iscomplexobj(covmean):
             covmean = covmean.real

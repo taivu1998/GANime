@@ -20,7 +20,7 @@ class CycleGAN_DataLoader(Base_DataLoader):
     ''' A dataloader for CycleGAN. '''
     
     def __init__(self, data_path, buffer_size = 400, batch_size = 32,
-                img_width = 256, img_height = 256):
+                 img_width = 256, img_height = 256):
         ''' Initializes the class. '''
         super().__init__()
         self.data_path = data_path

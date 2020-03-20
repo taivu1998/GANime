@@ -92,7 +92,7 @@ class CycleGAN(BaseModel):
                                               discriminator_y_optimizer = self.discriminator_y_optimizer)
 
         self.checkpoint_manager = tf.train.CheckpointManager(self.checkpoint, checkpoint_path,
-                                                             max_to_keep=None)
+                                                             max_to_keep = None)
 
     def configure_logs(self, log_path):
         ''' Configures logs. '''
@@ -160,21 +160,21 @@ class CycleGAN(BaseModel):
             # Generator G translates X -> Y
             # Generator F translates Y -> X.
 
-            fake_y = self.generator_g(real_x, training=True)
-            cycled_x = self.generator_f(fake_y, training=True)
+            fake_y = self.generator_g(real_x, training = True)
+            cycled_x = self.generator_f(fake_y, training = True)
 
-            fake_x = self.generator_f(real_y, training=True)
-            cycled_y = self.generator_g(fake_x, training=True)
+            fake_x = self.generator_f(real_y, training = True)
+            cycled_y = self.generator_g(fake_x, training = True)
 
             # same_x and same_y are used for identity loss.
-            same_x = self.generator_f(real_x, training=True)
-            same_y = self.generator_g(real_y, training=True)
+            same_x = self.generator_f(real_x, training = True)
+            same_y = self.generator_g(real_y, training = True)
 
-            disc_real_x = self.discriminator_x(real_x, training=True)
-            disc_real_y = self.discriminator_y(real_y, training=True)
+            disc_real_x = self.discriminator_x(real_x, training = True)
+            disc_real_y = self.discriminator_y(real_y, training = True)
 
-            disc_fake_x = self.discriminator_x(fake_x, training=True)
-            disc_fake_y = self.discriminator_y(fake_y, training=True)
+            disc_fake_x = self.discriminator_x(fake_x, training = True)
+            disc_fake_y = self.discriminator_y(fake_y, training = True)
 
             # Calculates the loss.
             gen_g_loss = self.generator_loss(disc_fake_y)

@@ -34,9 +34,9 @@ def load(image_file):
 def resize(input_image, real_image, height, width):
     ''' Resizes two images. '''
     input_image = tf.image.resize(input_image, [height, width],
-                                  method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
+                                  method = tf.image.ResizeMethod.NEAREST_NEIGHBOR)
     real_image = tf.image.resize(real_image, [height, width],
-                                 method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
+                                 method = tf.image.ResizeMethod.NEAREST_NEIGHBOR)
     return input_image, real_image
 
 
@@ -59,7 +59,7 @@ def preprocess_dataset_pix2pix():
     for split in ['train', 'val']:
         image_folder_path = os.path.join(data_path, split)
         for image_path in glob.glob(image_folder_path  + '/*.png'):
-            img_name = image_path[image_path.rfind('/') + 1:image_path.rfind('.')]
+            img_name = image_path[image_path.rfind('/') + 1 : image_path.rfind('.')]
             save_path = os.path.join(data_preprocessed_path, split, img_name + '.jpg')
             preprocess_pix2pix(image_path, save_path)
 
@@ -84,7 +84,7 @@ def preprocess_dataset_cyclegan():
     for split in ['train', 'val']:
         image_folder_path = os.path.join(data_path, split)
         for image_path in glob.glob(image_folder_path  + '/*.png'):
-            img_name = image_path[image_path.rfind('/') + 1:image_path.rfind('.')]
+            img_name = image_path[image_path.rfind('/') + 1 : image_path.rfind('.')]
             save_path_sketch = os.path.join(data_preprocessed_path, split + 'A', img_name + '.jpg')
             save_path_color = os.path.join(data_preprocessed_path, split + 'B', img_name + '.jpg')
             preprocess_cyclegan(image_path, save_path_sketch, save_path_color)
