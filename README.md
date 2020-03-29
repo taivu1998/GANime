@@ -1,6 +1,6 @@
 # GANime
 
-This program implements several deep generative models for generating colorized anime characters based on sketch drawings. There are three main models used in this project, including Neural Style Transfer, Conditional GAN (Pix2Pix), and CycleGAN. [[Paper]](https://github.com/taivu1998/GANime/files/4398707/GANime.pdf) [[Poster]](https://github.com/taivu1998/GANime/files/4398709/GANime_Poster.pdf)
+This program implements several deep generative models for generating colorized anime characters based on sketch drawings. There are three main models used in this project, including Neural Style Transfer, Conditional GAN (Pix2Pix), and CycleGAN. [[Paper]](https://drive.google.com/file/d/1lubQpV6RLaykZOroFpk6AMrSW5djzTIO/view?usp=sharing) [[Poster]](https://drive.google.com/file/d/1EpBrz6kuhmAfMsv6CDTD0tgZkV2ah-60/view?usp=sharing)
 
 ## Demo
 
