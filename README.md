@@ -41,7 +41,7 @@ python utils/download_data.py
 After that, run the following command to preprocess the data:
 
 ```bash
-python utils/preprocess_data.py --model [model]
+python utils/preprocess_data.py --model <model>
 ```
 
 ## Train the models
@@ -49,25 +49,25 @@ python utils/preprocess_data.py --model [model]
 - Neural Style Transfer
 
 ```bash
-python train.py --model neural_style_transfer --epochs 1000 --content-path /path/to/content/image/  --style-path /path/to/style/image/ --output-path /path/to/output/image/
+python train.py --model neural_style_transfer --epochs 1000 --content-path </path/to/content/image/>  --style-path </path/to/style/image/> --output-path </path/to/output/image/>
 ```
 
 - Fast Neural Style Transfer
 
 ```bash
-python train.py --model fast_neural_style_transfer --content-path /path/to/content/image/  --style-path /path/to/style/image/ --output-path /path/to/output/image/
+python train.py --model fast_neural_style_transfer --content-path </path/to/content/image/>  --style-path </path/to/style/image/> --output-path </path/to/output/image/>
 ```
 
 - Pix2Pix
 
 ```bash
-python train.py --model pix2pix --epochs 150 --lr 2e-4 --batch-size 32 --data-path /path/to/dataset/ --resume --output-path /path/to/outputs/ --checkpoint-path /path/to/checkpoints/ 
+python train.py --model pix2pix --epochs 150 --lr 2e-4 --batch-size 32 --data-path </path/to/dataset/> --resume --output-path </path/to/outputs/> --checkpoint-path </path/to/checkpoints/>
 ```
 
 - CycleGAN
 
 ```bash
-python train.py --model cyclegan --epochs 150 --lr 2e-4 --batch-size 8 --data-path /path/to/dataset/ --resume --output-path /path/to/outputs/ --checkpoint-path /path/to/checkpoints/ 
+python train.py --model cyclegan --epochs 150 --lr 2e-4 --batch-size 8 --data-path </path/to/dataset/> --resume --output-path </path/to/outputs/> --checkpoint-path </path/to/checkpoints/>
 ```
 
 ## Test the models
@@ -75,25 +75,25 @@ python train.py --model cyclegan --epochs 150 --lr 2e-4 --batch-size 8 --data-pa
 - Neural Style Transfer
 
 ```bash
-python test.py --model neural_style_transfer --data-path /path/to/dataset/ --output-path /path/to/outputs/ 
+python test.py --model neural_style_transfer --data-path </path/to/dataset/> --output-path </path/to/outputs/>
 ```
 
 - Fast Neural Style Transfer
 
 ```bash
-python test.py --model fast_neural_style_transfer --data-path /path/to/dataset/ --output-path /path/to/outputs/ 
+python test.py --model fast_neural_style_transfer --data-path </path/to/dataset/> --output-path </path/to/outputs/>
 ```
 
 - Pix2Pix
 
 ```bash
-python test.py --model pix2pix --data-path /path/to/dataset/ --output-path /path/to/outputs/ --checkpoint-path /path/to/checkpoints/ 
+python test.py --model pix2pix --data-path </path/to/dataset/> --output-path </path/to/outputs/> --checkpoint-path </path/to/checkpoints/>
 ```
 
 - CycleGAN
 
 ```bash
-python test.py --model cyclegan --data-path /path/to/dataset/ --output-path /path/to/outputs/ --checkpoint-path /path/to/checkpoints/ 
+python test.py --model cyclegan --data-path </path/to/dataset/> --output-path </path/to/outputs/> --checkpoint-path </path/to/checkpoints/>
 ```
 
 ## Evaluate the models
@@ -101,7 +101,7 @@ python test.py --model cyclegan --data-path /path/to/dataset/ --output-path /pat
 The program implements two evaluation metrics, including the Structural Similarity (SSIM) Index and the Frechet Inception Distance (FID). To evaluate the models, run the following command:
 
 ```bash
-python evaluate.py --model [model] --metric [metric] --output-path /path/to/outputs/
+python evaluate.py --model <model> --metric <metric> --output-path </path/to/outputs/>
 ```
 
 ## Authors
