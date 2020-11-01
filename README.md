@@ -110,6 +110,8 @@ python evaluate.py --model [model] --metric [metric] --output-path /path/to/outp
 
 * **Robert Yang** - Stanford University
 
+Note: This project was collaboratively worked on in Google Colab / Google Drive and subsequently released on GitHub.
+
 ## References
 
 - Gatys, Leon A., et al. “A Neural Algorithm of Artistic Style.” ArXiv:1508.06576 [Cs, q-Bio], Sept. 2015. arXiv.org, http://arxiv.org/abs/1508.06576.
