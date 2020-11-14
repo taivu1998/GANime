@@ -110,7 +110,6 @@ python evaluate.py --model <model> --metric <metric> --output-path </path/to/out
 
 * **Robert Yang** - Stanford University
 
-Note: This project was collaboratively worked on in Google Colab / Google Drive and subsequently released on GitHub.
 
 ## References
 
