@@ -14,12 +14,13 @@ import numpy as np
 
 
 from BaseDataLoader import Base_DataLoader
+from utils.image_io import read_image
 
 class Pix2Pix_DataLoader(Base_DataLoader):
     ''' A dataloader for Pix2Pix. '''
 
     def __init__(self, data_path, buffer_size = 400, batch_size = 32,
-                 img_width = 256, img_height = 256):
+                 img_width = 256, img_height = 256, augment = True):
         ''' Initializes the class. '''
         super().__init__()
         self.data_path = data_path
@@ -27,6 +28,7 @@ class Pix2Pix_DataLoader(Base_DataLoader):
         self.batch_size = batch_size
         self.img_width = img_width
         self.img_height = img_height
+        self.augment = augment
 
     def load_dataset(self):
         ''' Loads the dataset. '''
@@ -34,17 +36,25 @@ class Pix2Pix_DataLoader(Base_DataLoader):
         train_dataset = train_dataset.map(self.load_image_train,
                                           num_parallel_calls = tf.data.experimental.AUTOTUNE)
         train_dataset = train_dataset.shuffle(self.buffer_size).batch(self.batch_size)
+        train_dataset = train_dataset.prefetch(tf.data.experimental.AUTOTUNE)
 
-        test_dataset = tf.data.Dataset.list_files(os.path.join(self.data_path, 'val/*.jpg'))
-        test_dataset = test_dataset.map(self.load_image_test)
+        test_dataset = tf.data.Dataset.list_files(os.path.join(self.data_path, 'val/*.jpg'),
+                                                  shuffle = False)
+        test_dataset = test_dataset.map(self.load_image_test,
+                                        num_parallel_calls = tf.data.experimental.AUTOTUNE)
         test_dataset = test_dataset.batch(self.batch_size)
+        test_dataset = test_dataset.prefetch(tf.data.experimental.AUTOTUNE)
         
         return train_dataset, test_dataset
         
     def load_image_train(self, image_file):
         ''' Loads the training set. '''
         input_image, real_image = self.load(image_file, dtype = 'float32')
-        input_image, real_image = self.random_jitter(input_image, real_image)
+        if self.augment:
+            input_image, real_image = self.random_jitter(input_image, real_image)
+        else:
+            input_image, real_image = self.resize(input_image, real_image,
+                                                  self.img_height, self.img_width)
         input_image, real_image = self.normalize(input_image, real_image)
         return input_image, real_image
 
@@ -58,18 +68,13 @@ class Pix2Pix_DataLoader(Base_DataLoader):
 
     def load(self, image_file, dtype = 'uint8'):
         ''' Loads an image. '''
-        image = tf.io.read_file(image_file)
-        image = tf.image.decode_png(image)
+        image = read_image(image_file, dtype = dtype)
 
         width = tf.shape(image)[1]
         mid = width // 2
 
         sketch_image = image[:, mid:, :]
         color_image = image[:, :mid, :]
-        
-        img_type = eval('tf.' + dtype)
-        sketch_image = tf.cast(sketch_image, img_type)
-        color_image = tf.cast(color_image, img_type)
 
         return sketch_image, color_image
         

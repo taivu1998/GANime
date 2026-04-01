@@ -30,16 +30,17 @@ class CycleGAN(BaseModel):
         ''' Initializes the class. '''
         super().__init__()
 
-    def build_model(self, arch_gen = 'unet', arch_disc = 'patchgan', output_channels = 3):
+    def build_model(self, arch_gen = 'unet', arch_disc = 'patchgan',
+                    output_channels = 3, norm_type = 'instancenorm'):
         ''' Builds network architectures. '''
         net = Pix2Pix_Net()
         self.generator_g = net.Generator(output_channels = output_channels,
-                                         arch = arch_gen, norm_type = 'instancenorm')
+                                         arch = arch_gen, norm_type = norm_type)
         self.generator_f = net.Generator(output_channels = output_channels,
-                                         arch = arch_gen, norm_type = 'instancenorm')
-        self.discriminator_x = net.Discriminator(arch = arch_disc, norm_type = 'instancenorm',
+                                         arch = arch_gen, norm_type = norm_type)
+        self.discriminator_x = net.Discriminator(arch = arch_disc, norm_type = norm_type,
                                                  target = False)
-        self.discriminator_y = net.Discriminator(arch = arch_disc, norm_type = 'instancenorm',
+        self.discriminator_y = net.Discriminator(arch = arch_disc, norm_type = norm_type,
                                                  target = False)
 
     def configure_losses(self, lambda_cycle_loss = 10):
@@ -112,17 +113,21 @@ class CycleGAN(BaseModel):
     def fit(self, train_sketch, train_color, test_sketch, test_color, output_path,
             start_epoch = 0, epochs = 150, resume = True, save_ckpt_freq = 5):
         ''' Trains the model. '''
-        if not os.path.isdir(output_path):
-            os.mkdir(output_path)
+        os.makedirs(output_path, exist_ok = True)
         
         latest_ckpt = self.checkpoint_manager.latest_checkpoint
         if resume and latest_ckpt:
             self.checkpoint.restore(latest_ckpt)
             start_epoch = int(self.checkpoint.step)
             print("Model Restored from {}".format(latest_ckpt))
+
+        if start_epoch >= epochs:
+            print("Training already completed up to epoch {}.".format(start_epoch))
+            return
             
         for epoch in range(start_epoch, epochs):
             start = time.time()
+            self.reset_epoch_metrics()
             self.save_output(epoch, train_sketch, test_sketch, output_path)
             
             print("Epoch: ", epoch)
@@ -227,26 +232,32 @@ class CycleGAN(BaseModel):
     def save_output(self, epoch, train_dataset, test_dataset, output_path):
         ''' Saves output images for each epoch. '''
         epoch_path = os.path.join(output_path, 'Epoch ' + str(epoch).zfill(3))
-        if not os.path.isdir(epoch_path):
-            os.mkdir(epoch_path)
+        os.makedirs(epoch_path, exist_ok = True)
             
-        dataset_names = {train_dataset: 'train', test_dataset: 'val'}
-
-        for dataset in [train_dataset, test_dataset]:
+        for dataset_name, dataset in [('train', train_dataset), ('val', test_dataset)]:
             count = 0
             for example_input in dataset.take(2):
                 count += 1
-                example_prediction = self.generator_g(example_input, training = True)
+                example_prediction = self.generator_g(example_input, training = False)
                 img_list = [example_input[0], example_prediction[0]]
                 img_list = [tf.cast((img + 1) * 127.5, tf.uint8) for img in img_list]
                 img_type = ['real_sketch', 'fake_color']
 
                 for i in range(2):
-                    img_name = 'epoch' + str(epoch).zfill(3) + '_' + dataset_names[dataset] + \
+                    img_name = 'epoch' + str(epoch).zfill(3) + '_' + dataset_name + \
                                 '_img' + str(count) + '_' + img_type[i] + '.jpg'
                     img_path = os.path.join(epoch_path, img_name)
                     image_jpg = tf.io.encode_jpeg(img_list[i])
                     tf.io.write_file(img_path, image_jpg)
+
+    def reset_epoch_metrics(self):
+        ''' Resets per-epoch aggregated metrics. '''
+        for metric in [self.train_loss_g_g, self.train_loss_g_f,
+                       self.train_loss_d_x, self.train_loss_d_y]:
+            if hasattr(metric, 'reset_state'):
+                metric.reset_state()
+            else:
+                metric.reset_states()
 
     def predict(self, img_input):
         ''' Generates an output image from an input. '''

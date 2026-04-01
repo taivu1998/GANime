@@ -14,13 +14,14 @@ import numpy as np
 
 
 from BaseDataLoader import Base_DataLoader
+from utils.image_io import read_image
 
 
 class CycleGAN_DataLoader(Base_DataLoader):
     ''' A dataloader for CycleGAN. '''
     
     def __init__(self, data_path, buffer_size = 400, batch_size = 32,
-                 img_width = 256, img_height = 256):
+                 img_width = 256, img_height = 256, augment = True):
         ''' Initializes the class. '''
         super().__init__()
         self.data_path = data_path
@@ -28,6 +29,7 @@ class CycleGAN_DataLoader(Base_DataLoader):
         self.batch_size = batch_size
         self.img_width = img_width
         self.img_height = img_height
+        self.augment = augment
         
     def load_dataset(self):
         ''' Loads the dataset. '''
@@ -35,28 +37,37 @@ class CycleGAN_DataLoader(Base_DataLoader):
         train_sketch = train_sketch.map(self.load_image_train,
                                         num_parallel_calls = tf.data.experimental.AUTOTUNE)
         train_sketch = train_sketch.cache().shuffle(self.buffer_size).batch(self.batch_size)
+        train_sketch = train_sketch.prefetch(tf.data.experimental.AUTOTUNE)
 
         train_color = tf.data.Dataset.list_files(os.path.join(self.data_path, 'trainB/*.jpg'))
         train_color = train_color.map(self.load_image_train,
                                       num_parallel_calls = tf.data.experimental.AUTOTUNE)
         train_color = train_color.cache().shuffle(self.buffer_size).batch(self.batch_size)
+        train_color = train_color.prefetch(tf.data.experimental.AUTOTUNE)
             
-        test_sketch = tf.data.Dataset.list_files(os.path.join(self.data_path, 'valA/*.jpg'))
+        test_sketch = tf.data.Dataset.list_files(os.path.join(self.data_path, 'valA/*.jpg'),
+                                                 shuffle = False)
         test_sketch = test_sketch.map(self.load_image_test,
                                       num_parallel_calls = tf.data.experimental.AUTOTUNE)
         test_sketch = test_sketch.cache().batch(self.batch_size)
+        test_sketch = test_sketch.prefetch(tf.data.experimental.AUTOTUNE)
 
-        test_color = tf.data.Dataset.list_files(os.path.join(self.data_path, 'valB/*.jpg'))
+        test_color = tf.data.Dataset.list_files(os.path.join(self.data_path, 'valB/*.jpg'),
+                                                shuffle = False)
         test_color = test_color.map(self.load_image_test,
                                     num_parallel_calls = tf.data.experimental.AUTOTUNE)
         test_color = test_color.cache().batch(self.batch_size)
+        test_color = test_color.prefetch(tf.data.experimental.AUTOTUNE)
         
         return train_sketch, train_color, test_sketch, test_color
             
     def load_image_train(self, image_file):
         ''' Loads the training set. '''
         image = self.load(image_file, dtype = 'float32')
-        image = self.random_jitter(image)
+        if self.augment:
+            image = self.random_jitter(image)
+        else:
+            image = self.resize(image, self.img_height, self.img_width)
         image = self.normalize(image)
         return image
         
@@ -69,11 +80,7 @@ class CycleGAN_DataLoader(Base_DataLoader):
 
     def load(self, image_file, dtype = 'uint8'):
         ''' Loads an image. '''
-        image = tf.io.read_file(image_file)
-        image = tf.image.decode_png(image)
-        img_type = eval('tf.' + dtype)
-        image = tf.cast(image, img_type)
-        return image
+        return read_image(image_file, dtype = dtype)
         
     def resize(self, image, height, width):
         ''' Resizes an image. '''

@@ -26,6 +26,10 @@ class EvaluateOptions(BaseOptions):
         ''' Adds command line options. '''
         parser.add_argument('--metric', type = str, default = 'fid',
                             help = 'Evaluation metric.', choices = metric_options)
+        parser.add_argument('--report-path', type = str, default = None,
+                            help = 'Optional path for the text score report.')
+        parser.add_argument('--plot-path', type = str, default = None,
+                            help = 'Optional path for the score plot image.')
         parser.add_argument('--start-epoch', type = int, default = 0,
                             help = 'Starting epoch.')
         parser.add_argument('--epochs', type = int, default = 150,

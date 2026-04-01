@@ -12,6 +12,13 @@ import glob
 import argparse
 import numpy as np
 
+try:
+    from utils.image_io import read_image, write_image
+    from utils.runtime import ensure_dir
+except ImportError:
+    from image_io import read_image, write_image
+    from runtime import ensure_dir
+
 
 IMG_WIDTH = 256
 IMG_HEIGHT = 256
@@ -19,8 +26,7 @@ IMG_HEIGHT = 256
 
 def load(image_file):
     ''' Loads an image. '''
-    image = tf.io.read_file(image_file)
-    image = tf.image.decode_png(image)
+    image = read_image(image_file)
 
     width = tf.shape(image)[1]
     mid = width // 2
@@ -45,19 +51,19 @@ def preprocess_pix2pix(image_path, save_path):
     sketch_image, color_image = load(image_path)
     sketch_image, color_image = resize(sketch_image, color_image, IMG_HEIGHT, IMG_WIDTH)
     image = tf.concat([color_image, sketch_image], axis = 1)
-    image_jpg = tf.io.encode_jpeg(image)
-    tf.io.write_file(save_path, image_jpg)
+    write_image(image, save_path, image_format = 'jpeg')
 
 
-def preprocess_dataset_pix2pix():
+def preprocess_dataset_pix2pix(data_path, data_preprocessed_path):
     ''' Preprocesses data for Pix2Pix. '''
-    data_path = os.path.join(os.getcwd(), 'data',
-                             'anime-sketch-colorization-pair')
-    data_preprocessed_path = os.path.join(os.getcwd(), 'data',
-                                          'anime-sketch-colorization-pair-resized')
-                                          
+    if not os.path.isdir(data_path):
+        raise ValueError('Source dataset directory does not exist: {}'.format(data_path))
+
     for split in ['train', 'val']:
+        ensure_dir(os.path.join(data_preprocessed_path, split))
         image_folder_path = os.path.join(data_path, split)
+        if not os.path.isdir(image_folder_path):
+            raise ValueError('Expected split directory does not exist: {}'.format(image_folder_path))
         for image_path in glob.glob(image_folder_path  + '/*.png'):
             img_name = image_path[image_path.rfind('/') + 1 : image_path.rfind('.')]
             save_path = os.path.join(data_preprocessed_path, split, img_name + '.jpg')
@@ -68,21 +74,21 @@ def preprocess_cyclegan(image_path, save_path_sketch, save_path_color):
     ''' Preprocesses an example for CycleGAN. '''
     sketch_image, color_image = load(image_path)
     sketch_image, color_image = resize(sketch_image, color_image, IMG_HEIGHT, IMG_WIDTH)
-    sketch_jpg = tf.io.encode_jpeg(sketch_image)
-    color_jpg = tf.io.encode_jpeg(color_image)
-    tf.io.write_file(save_path_sketch, sketch_jpg)
-    tf.io.write_file(save_path_color, color_jpg)
+    write_image(sketch_image, save_path_sketch, image_format = 'jpeg')
+    write_image(color_image, save_path_color, image_format = 'jpeg')
     
     
-def preprocess_dataset_cyclegan():
+def preprocess_dataset_cyclegan(data_path, data_preprocessed_path):
     ''' Preprocesses data for CycleGAN. '''
-    data_path = os.path.join(os.getcwd(), 'data',
-                             'anime-sketch-colorization-pair')
-    data_preprocessed_path = os.path.join(os.getcwd(), 'data',
-                                          'anime-sketch-colorization-pair-resized')
-                                          
+    if not os.path.isdir(data_path):
+        raise ValueError('Source dataset directory does not exist: {}'.format(data_path))
+
     for split in ['train', 'val']:
+        ensure_dir(os.path.join(data_preprocessed_path, split + 'A'))
+        ensure_dir(os.path.join(data_preprocessed_path, split + 'B'))
         image_folder_path = os.path.join(data_path, split)
+        if not os.path.isdir(image_folder_path):
+            raise ValueError('Expected split directory does not exist: {}'.format(image_folder_path))
         for image_path in glob.glob(image_folder_path  + '/*.png'):
             img_name = image_path[image_path.rfind('/') + 1 : image_path.rfind('.')]
             save_path_sketch = os.path.join(data_preprocessed_path, split + 'A', img_name + '.jpg')
@@ -98,7 +104,13 @@ def parseArgs():
                                      formatter_class = argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--model', type = str, default = 'pix2pix',
                         help = 'Model.', choices = model_options)
-    args = parser.parse_known_args()[0]
+    parser.add_argument('--data-path', type = str,
+                        default = os.path.join(os.getcwd(), 'data', 'anime-sketch-colorization-pair'),
+                        help = 'Path to the source dataset with PNG image pairs.')
+    parser.add_argument('--output-path', type = str,
+                        default = os.path.join(os.getcwd(), 'data', 'anime-sketch-colorization-pair-resized'),
+                        help = 'Path to the preprocessed output dataset.')
+    args = parser.parse_args()
     return args
     
     
@@ -106,9 +118,9 @@ def main():
     ''' Main program. '''
     args = parseArgs()
     if args.model == 'cyclegan':
-        preprocess_dataset_cyclegan()
+        preprocess_dataset_cyclegan(args.data_path, args.output_path)
     else:
-        preprocess_dataset_pix2pix()
+        preprocess_dataset_pix2pix(args.data_path, args.output_path)
     
     
 if __name__ == '__main__':

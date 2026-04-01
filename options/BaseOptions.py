@@ -26,7 +26,7 @@ class BaseOptions(object):
         
     def parse(self):
         ''' Parses command line arguments. '''
-        args = self.parser.parse_known_args()[0]
+        args = self.parser.parse_args()
         return args
 
     def add_options(self, parser):
@@ -37,8 +37,9 @@ class BaseOptions(object):
                             help = 'Architecture for generators.', choices = arch_gen_options)
         parser.add_argument('--arch-disc', type = str, default = 'patchgan',
                             help = 'Architecture for discriminators.', choices = arch_disc_options)
-        parser.add_argument('--norm', type=str, default = 'batchnorm',
-                            help = 'Type of normalization.')
+        parser.add_argument('--norm', type = str, default = None,
+                            help = 'Type of normalization.',
+                            choices = ['batchnorm', 'instancenorm'])
         parser.add_argument('--data-path', type = str, default = None,
                             help = 'Path to dataset.')
         parser.add_argument('--checkpoint-path', type = str, default = 'checkpoints',

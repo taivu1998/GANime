@@ -1,1 +1,9 @@
 .DS_Store
+IMPROVEMENT_PLAN.md
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+outputs/
+logs/
+checkpoints/

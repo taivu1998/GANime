@@ -14,6 +14,7 @@ import numpy as np
 
 
 from BaseDataLoader import Base_DataLoader
+from utils.image_io import read_image, resolve_tf_dtype
 
 
 class NeuralStyleTransfer_DataLoader(Base_DataLoader):
@@ -34,9 +35,8 @@ class NeuralStyleTransfer_DataLoader(Base_DataLoader):
     def load(self, image_file, dtype = 'uint8'):
         ''' Loads an image. '''
         max_dim = 512
-        img = tf.io.read_file(image_file)
-        img = tf.image.decode_image(img, channels = 3)
-        img_type = eval('tf.' + dtype)
+        img = read_image(image_file)
+        img_type = resolve_tf_dtype(dtype)
         img = tf.image.convert_image_dtype(img, img_type)
 
         shape = tf.cast(tf.shape(img)[:-1], tf.float32)

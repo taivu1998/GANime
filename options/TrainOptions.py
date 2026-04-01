@@ -33,8 +33,10 @@ class TrainOptions(BaseOptions):
                             help = 'Number of epochs.')
         parser.add_argument('--buffer-size', type = int, default = 400,
                             help = 'Buffer size for shuffling.')
-        parser.add_argument('--augment', action = 'store_true', default = False,
+        parser.add_argument('--augment', dest = 'augment', action = 'store_true', default = True,
                             help = 'Augment dataset by flipping and cropping.')
+        parser.add_argument('--no-augment', dest = 'augment', action = 'store_false',
+                            help = 'Disable dataset augmentation during training.')
         parser.add_argument('--optim', type = str, default = 'adam',
                             help = 'Optimization algorithm.', choices = optimizer_options)
         parser.add_argument('--momentum', type = float, default = 0.0,
@@ -55,7 +57,7 @@ class TrainOptions(BaseOptions):
                             help = 'Norm in variation loss.', choices = norm_tv_loss_options)
         parser.add_argument('--lambda-tv-loss', type = float, default = 1e-4,
                             help = 'Lambda in GAN total variation loss.')
-        parser.add_argument('--lambda-cycle-loss', type = float, default = 1e-4,
+        parser.add_argument('--lambda-cycle-loss', type = float, default = 10.,
                             help = 'Lambda in GAN cycle consistency loss.')
         parser.add_argument('--resume', action = 'store_true', default = False,
                             help = 'Resume from checkpoints.')

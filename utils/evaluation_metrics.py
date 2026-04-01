@@ -13,10 +13,11 @@ from tensorflow import keras
 from tensorflow.keras.applications.inception_v3 import InceptionV3, preprocess_input
 
 import os
-import glob
 import numpy as np
 import scipy
 from PIL import Image
+
+from utils.image_io import list_image_paths, read_image
 
 
 class FID(object):
@@ -35,8 +36,15 @@ class FID(object):
         
     def load_images(self, data_path_real, data_path_fake):
         ''' Loads two sets of image. '''
-        path_list_real = glob.glob(os.path.join(data_path_real, '*.jpg'))
-        path_list_fake = glob.glob(os.path.join(data_path_fake, '*.jpg'))
+        path_list_real = list_image_paths(data_path_real)
+        path_list_fake = list_image_paths(data_path_fake)
+
+        if len(path_list_real) == 0 or len(path_list_fake) == 0:
+            raise ValueError('FID requires non-empty real and fake image directories.')
+        if len(path_list_real) != len(path_list_fake):
+            raise ValueError('FID requires matching numbers of real and fake images: {} vs {}'.format(
+                len(path_list_real), len(path_list_fake)))
+
         real_list = []
         fake_list = []
         
@@ -89,10 +97,14 @@ class SSIM(object):
         
     def evaluate(self, data_path_real, data_path_fake):
         ''' Calculates the average SSIM score between two data paths. '''
-        path_list_real = glob.glob(os.path.join(data_path_real, '*.jpg'))
-        path_list_fake = glob.glob(os.path.join(data_path_fake, '*.jpg'))
-        path_list_real = sorted(path_list_real)
-        path_list_fake = sorted(path_list_fake)
+        path_list_real = list_image_paths(data_path_real)
+        path_list_fake = list_image_paths(data_path_fake)
+
+        if len(path_list_real) == 0 or len(path_list_fake) == 0:
+            raise ValueError('SSIM requires non-empty real and fake image directories.')
+        if len(path_list_real) != len(path_list_fake):
+            raise ValueError('SSIM requires matching numbers of real and fake images: {} vs {}'.format(
+                len(path_list_real), len(path_list_fake)))
         
         score_list = []
         for i in range(len(path_list_real)):
@@ -103,10 +115,8 @@ class SSIM(object):
         
     def ssim_score(self, img_path_real, img_path_fake):
         ''' Calculates the SSIM score between two image paths. '''
-        img_real = tf.io.read_file(img_path_real)
-        img_real = tf.image.decode_png(img_real)
-        img_fake = tf.io.read_file(img_path_fake)
-        img_fake = tf.image.decode_png(img_fake)
+        img_real = read_image(img_path_real, dtype = tf.uint8)
+        img_fake = read_image(img_path_fake, dtype = tf.uint8)
         ssim = self.calculate_ssim(img_real, img_fake, dtype = tf.uint8)
         return float(ssim)
         
